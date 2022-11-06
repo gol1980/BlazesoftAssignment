@@ -5,6 +5,6 @@ namespace SlotMachine.API.BLs.Interfaces
 {
     public interface ISpinBL
     {
-        Task<SpinResponse> Play(int playerId, int betAmount);
+        Task<SpinResponse> PlayAsync(int playerId, int betAmount);
     }
 }

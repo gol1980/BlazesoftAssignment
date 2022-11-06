@@ -11,6 +11,7 @@ using SlotMachine.API.BLs;
 using SlotMachine.API.BLs.Interfaces;
 using SlotMachine.API.Data;
 using SlotMachine.API.Data.Interfaces;
+using SlotMachine.API.Middlewares;
 using SlotMachine.API.Repositories;
 using SlotMachine.API.Repositories.Interfaces;
 using SlotMachine.API.Settings;
@@ -45,6 +46,8 @@ namespace SlotMachine.API
             services.AddTransient<IGameConfigurationRepository, GameConfigurationRepository>();
             services.AddTransient<ISpinRepository, SpinRepository>();
             services.AddTransient<ISpinBL, SpinBL>();
+            services.AddTransient<IBalanceBL, BalanceBL>();
+            services.AddTransient<IGameConfigurationBL, GameConfigurationBL>();
 
 
             services.AddCors(options =>
@@ -75,6 +78,7 @@ namespace SlotMachine.API
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
 

@@ -5,6 +5,13 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlotMachine.API", "SlotMachine.API\SlotMachine.API.csproj", "{9227B1CB-3CB2-4872-B2BC-39A79AF99B70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlotMachine.Test", "SlotMachine.Test\SlotMachine.Test.csproj", "{EE70798C-07DD-4160-AFBD-5331CD4EE48F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ABB89506-B2D8-40C3-AFAE-7AA1FF730773}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.txt = ReadMe.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +22,10 @@ Global
 		{9227B1CB-3CB2-4872-B2BC-39A79AF99B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9227B1CB-3CB2-4872-B2BC-39A79AF99B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9227B1CB-3CB2-4872-B2BC-39A79AF99B70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE70798C-07DD-4160-AFBD-5331CD4EE48F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE70798C-07DD-4160-AFBD-5331CD4EE48F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE70798C-07DD-4160-AFBD-5331CD4EE48F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE70798C-07DD-4160-AFBD-5331CD4EE48F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

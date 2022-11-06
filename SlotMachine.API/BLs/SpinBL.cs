@@ -26,24 +26,22 @@ namespace SlotMachine.API.BLs
         }
 
 
-        public async Task<SpinResponse> Play(int playerId, int betAmount)
+        public async Task<SpinResponse> PlayAsync(int playerId, int betAmount)
         {
-
             // get player 
             var player = await _playerRepository.GetPlayerAsync(playerId);
             if (player == null)
                 throw new AppException("Player not found", HttpStatusCode.NotFound);
 
-            if(betAmount > player.Balance)
-                throw new AppException("Bet is higher than balance amount", HttpStatusCode.BadRequest);
+            if (betAmount > player.Balance)
+                throw new AppException("The amount exceeds the balance", HttpStatusCode.BadRequest);
 
 
             // get the num of reels from game configuration
             var con = await _gameConfiguration.GetConfigurationAsync();
 
             // spin the reels
-            //var spinResult = SpinReels(con.NumOfReels);
-            var spinResult = new int[] { 5,5,1};
+            var spinResult = SpinReels(con.NumOfReels);
 
             // save spin
             Spin spin = new Spin
@@ -53,7 +51,7 @@ namespace SlotMachine.API.BLs
                 Result = spinResult,
                 PlayerId = playerId
             };
-            var tSpin = _spinRepository.CreateAsync(spin);
+            _spinRepository.CreateAsync(spin);
 
 
             // calculate the Multiplier
@@ -64,25 +62,18 @@ namespace SlotMachine.API.BLs
 
             // update the balance
             var newBalance = player.Balance - betAmount + winBet;
-            var isSaved = await _playerRepository.UpdatePlayerBalanceAsync(playerId, newBalance);
+            await _playerRepository.UpdatePlayerBalanceAsync(playerId, newBalance);
 
-            await tSpin;
-            if (isSaved)
+            // return the result
+            return new SpinResponse
             {
-                // return the result
-                return new SpinResponse
-                {
-                    Balance = newBalance,
-                    SpinResult = spinResult,
-                    WinAmount = winBet
-                };
-            }
-            else
-                throw new AppException("Balance Update Error", HttpStatusCode.InternalServerError);
-
+                Balance = newBalance,
+                SpinResult = spinResult,
+                WinAmount = winBet
+            };
         }
 
-        private int[] SpinReels(int numOfReels)
+        public int[] SpinReels(int numOfReels)
         {
             int[] reels = new int[numOfReels];
             Random r = new Random();
@@ -95,7 +86,7 @@ namespace SlotMachine.API.BLs
             return reels;
         }
 
-        private int GetConsecutiveResult(int[] reels)
+        public int GetConsecutiveResult(int[] reels)
         {
             int result = reels[0];
             int previousReel = reels[0];

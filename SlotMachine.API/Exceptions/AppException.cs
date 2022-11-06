@@ -13,7 +13,8 @@ namespace SlotMachine.API.Exceptions
             _HttpStatusCode = HttpStatusCode;
         }
 
-        public AppException(string message, HttpStatusCode HttpStatusCode) : base(message) { _HttpStatusCode = HttpStatusCode; }
+        public AppException(string message, HttpStatusCode HttpStatusCode) 
+            : base(message) { _HttpStatusCode = HttpStatusCode; }
 
         public AppException(string message, HttpStatusCode HttpStatusCode, params object[] args)
             : base(String.Format(CultureInfo.CurrentCulture, message, args))

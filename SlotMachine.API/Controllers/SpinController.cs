@@ -17,9 +17,9 @@ namespace SlotMachine.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SpinResponse>> CreateProduct(int playerId, int betAmount)
+        public async Task<ActionResult<SpinResponse>> Spin(int playerId, int betAmount)
         {
-            var result = await _spinBL.Play(playerId, betAmount);
+            var result = await _spinBL.PlayAsync(playerId, betAmount);
             return Ok(result);
         }
     }
