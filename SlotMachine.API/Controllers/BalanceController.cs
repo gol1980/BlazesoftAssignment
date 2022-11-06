@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SlotMachine.API.BLs.Interfaces;
 using SlotMachine.API.Controllers.Base;
+using SlotMachine.API.Models.Requests;
 using SlotMachine.API.Repositories.Interfaces;
 using System.Threading.Tasks;
 
@@ -16,11 +17,18 @@ namespace SlotMachine.API.Controllers
             _balanceBL = balanceBL;
         }
 
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateBalance(int playerId, int amount)
+        [HttpPost("AddAmountToPlayer")]
+        public async Task<IActionResult> AddAmountToPlayer(AddAmountRequest amountData)
         {
-            await _balanceBL.AddAmountToPlayerAsync(playerId, amount);
+            await _balanceBL.AddAmountToPlayerAsync(amountData);
             return Ok();
+        }
+
+        [HttpGet("GetBalance/{playerId}")]
+        public async Task<IActionResult> GetPlayerBalance(int playerId)
+        {
+            var result = await _balanceBL.GetPlayerBalanceAsync(playerId);
+            return Ok(result);
         }
     }
 }

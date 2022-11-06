@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlotMachine.Test", "SlotMac
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ABB89506-B2D8-40C3-AFAE-7AA1FF730773}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\API characterization.docx = ..\..\..\Desktop\API characterization.docx
 		ReadMe.txt = ReadMe.txt
 	EndProjectSection
 EndProject

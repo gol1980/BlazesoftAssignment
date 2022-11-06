@@ -1,6 +1,7 @@
 ﻿using SlotMachine.API.BLs.Interfaces;
 using SlotMachine.API.Entities;
 using SlotMachine.API.Exceptions;
+using SlotMachine.API.Models.Requests;
 using SlotMachine.API.Models.Responses;
 using SlotMachine.API.Repositories.Interfaces;
 using System;
@@ -26,14 +27,14 @@ namespace SlotMachine.API.BLs
         }
 
 
-        public async Task<SpinResponse> PlayAsync(int playerId, int betAmount)
+        public async Task<SpinResponse> PlayAsync(SpinRequest spinData)
         {
             // get player 
-            var player = await _playerRepository.GetPlayerAsync(playerId);
+            var player = await _playerRepository.GetPlayerAsync(spinData.PlayerId);
             if (player == null)
                 throw new AppException("Player not found", HttpStatusCode.NotFound);
 
-            if (betAmount > player.Balance)
+            if (spinData.BetAmount > player.Balance)
                 throw new AppException("The amount exceeds the balance", HttpStatusCode.BadRequest);
 
 
@@ -41,28 +42,28 @@ namespace SlotMachine.API.BLs
             var con = await _gameConfiguration.GetConfigurationAsync();
 
             // spin the reels
-            var spinResult = SpinReels(con.NumOfReels);
+            var spinResult = await SpinReelsAsync(con.NumOfReels);
 
             // save spin
             Spin spin = new Spin
             {
-                Bet = betAmount,
+                Bet = spinData.BetAmount,
                 SpinDateTime = DateTime.Now,
                 Result = spinResult,
-                PlayerId = playerId
+                PlayerId = spinData.PlayerId
             };
             _spinRepository.CreateAsync(spin);
 
 
             // calculate the Multiplier
-            var reelsMultiplier = GetConsecutiveResult(spinResult);
+            var reelsMultiplier = await GetConsecutiveResultAsync(spinResult);
 
             // calculate the win amount
-            var winBet = betAmount * reelsMultiplier;
+            var winBet = spinData.BetAmount * reelsMultiplier;
 
             // update the balance
-            var newBalance = player.Balance - betAmount + winBet;
-            await _playerRepository.UpdatePlayerBalanceAsync(playerId, newBalance);
+            var newBalance = player.Balance - spinData.BetAmount + winBet;
+            await _playerRepository.UpdatePlayerBalanceAsync(spinData.PlayerId, newBalance);
 
             // return the result
             return new SpinResponse
@@ -73,7 +74,7 @@ namespace SlotMachine.API.BLs
             };
         }
 
-        public int[] SpinReels(int numOfReels)
+        public async Task<int[]> SpinReelsAsync(int numOfReels)
         {
             int[] reels = new int[numOfReels];
             Random r = new Random();
@@ -86,7 +87,7 @@ namespace SlotMachine.API.BLs
             return reels;
         }
 
-        public int GetConsecutiveResult(int[] reels)
+        public async Task<int> GetConsecutiveResultAsync(int[] reels)
         {
             int result = reels[0];
             int previousReel = reels[0];

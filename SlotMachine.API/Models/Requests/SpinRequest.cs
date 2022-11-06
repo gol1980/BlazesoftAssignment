@@ -2,7 +2,7 @@
 {
     public class SpinRequest
     {
-        public int Id { get; set; }
-        public int Bet { get; set; }
+        public int  PlayerId { get; set; }
+        public int BetAmount { get; set; }
     }
 }

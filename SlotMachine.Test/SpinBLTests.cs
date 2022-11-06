@@ -2,6 +2,7 @@
 using Xunit;
 using Moq;
 using SlotMachine.API.Repositories.Interfaces;
+using System.Threading.Tasks;
 
 namespace SlotMachine.Test
 {
@@ -24,10 +25,10 @@ namespace SlotMachine.Test
         }
 
         [Fact]
-        public void GetConsecutiveResult_GivenArray_ReturnMultipier()
+        public async Task GetConsecutiveResultAsync_GivenArray_ReturnMultipier()
         {
             int[] reels = new int[] { 5, 5, 3, 3 };
-            var result = _spinBL.GetConsecutiveResult(reels);
+            var result = await _spinBL.GetConsecutiveResultAsync(reels);
 
             Assert.Equal(10, result);
         }

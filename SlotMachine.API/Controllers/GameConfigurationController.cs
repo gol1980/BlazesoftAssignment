@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SlotMachine.API.BLs.Interfaces;
 using SlotMachine.API.Controllers.Base;
+using SlotMachine.API.Models.Requests;
 using SlotMachine.API.Repositories.Interfaces;
 using System.Threading.Tasks;
 
@@ -18,9 +19,9 @@ namespace SlotMachine.API.Controllers
         }
 
         [HttpPost("reels")]
-        public async Task<IActionResult> UpdateReelsConfiguration(int numOfReels)
+        public async Task<IActionResult> UpdateReelsConfiguration(GameConfigurationRequest configurationData)
         {
-            await _gameConfigurationBL.UpdateReelsConfigurationAsync(numOfReels);
+            await _gameConfigurationBL.UpdateReelsConfigurationAsync(configurationData);
             return Ok();
         }
     }

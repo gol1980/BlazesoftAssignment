@@ -1,5 +1,6 @@
 ﻿using SlotMachine.API.BLs.Interfaces;
 using SlotMachine.API.Exceptions;
+using SlotMachine.API.Models.Requests;
 using SlotMachine.API.Repositories.Interfaces;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,10 +16,16 @@ namespace SlotMachine.API.BLs
             _playerRepository = playerRepository;
         }
 
-        public async Task<bool> AddAmountToPlayerAsync(int playerId, int amountToAdd)
+        public async Task<bool> AddAmountToPlayerAsync(AddAmountRequest amountData)
+        {
+            var player = await _playerRepository.GetPlayerAsync(amountData.PlayerId);
+            return await _playerRepository.UpdatePlayerBalanceAsync(amountData.PlayerId, player.Balance + amountData.Amount);
+        }
+
+        public async Task<int> GetPlayerBalanceAsync(int playerId)
         {
             var player = await _playerRepository.GetPlayerAsync(playerId);
-            return await _playerRepository.UpdatePlayerBalanceAsync(playerId, player.Balance + amountToAdd);
+            return player.Balance;
         }
     }
 }
