@@ -89,8 +89,6 @@ namespace SlotMachine.API.BLs
 
             // return the result
             return sr;
-
-
         }
 
         public async Task<int[]> SpinReelsAsync(int numOfReels)
