@@ -16,19 +16,19 @@ namespace Lock.API.Controllers
         }
 
         [HttpGet]
-        [Route("Lock")]
-        public async Task<IActionResult> LockRequest()
+        [Route("Lock/{id}")]
+        public async Task<IActionResult> LockRequest(int id)
         {
-            await _requestLocker.LockRequest();
+            await _requestLocker.LockRequestAsync(id);
 
             return Ok();
         }
 
         [HttpGet]
-        [Route("Release")]
-        public async Task<IActionResult> ReleaseRequest()
+        [Route("Release/{id}")]
+        public async Task<IActionResult> ReleaseRequest(int id)
         {
-            await _requestLocker.ReleaseRequest();
+            await _requestLocker.ReleaseRequestAsync(id);
 
             return Ok();
         }

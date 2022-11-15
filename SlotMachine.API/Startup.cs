@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using SlotMachine.API.BLs;
 using SlotMachine.API.BLs.Interfaces;
+using SlotMachine.API.Clients;
 using SlotMachine.API.Data;
 using SlotMachine.API.Data.Interfaces;
 using SlotMachine.API.Middlewares;
@@ -48,6 +49,12 @@ namespace SlotMachine.API
             services.AddTransient<ISpinBL, SpinBL>();
             services.AddTransient<IBalanceBL, BalanceBL>();
             services.AddTransient<IGameConfigurationBL, GameConfigurationBL>();
+            services.AddTransient<ILockerClient, LockerClient>();
+
+            services.AddHttpClient("Locker", httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("http://localhost:5001/api/v1/");
+            });
 
 
             services.AddCors(options =>

@@ -1,4 +1,5 @@
 ﻿using SlotMachine.API.BLs.Interfaces;
+using SlotMachine.API.Clients;
 using SlotMachine.API.Entities;
 using SlotMachine.API.Exceptions;
 using SlotMachine.API.Models.Requests;
@@ -16,16 +17,18 @@ namespace SlotMachine.API.BLs
         private readonly IGameConfigurationRepository _gameConfiguration;
         private readonly ISpinRepository _spinRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly ILockerClient _lockerClient;
 
-        public SpinBL(IGameConfigurationRepository gameConfiguration,
-            ISpinRepository spinRepository,
-            IPlayerRepository playerRepository)
+        public SpinBL(IGameConfigurationRepository gameConfiguration, 
+            ISpinRepository spinRepository, 
+            IPlayerRepository playerRepository, 
+            ILockerClient lockerClient)
         {
             _gameConfiguration = gameConfiguration;
             _spinRepository = spinRepository;
             _playerRepository = playerRepository;
+            _lockerClient = lockerClient;
         }
-
 
         public async Task<SpinResponse> PlayAsync(SpinRequest spinData)
         {
@@ -37,6 +40,9 @@ namespace SlotMachine.API.BLs
             if (spinData.BetAmount > player.Balance)
                 throw new AppException("The amount exceeds the balance", HttpStatusCode.BadRequest);
 
+            await _lockerClient.GetLock(player.Id);
+
+            #region Critial Section
 
             // get the num of reels from game configuration
             var con = await _gameConfiguration.GetConfigurationAsync();
@@ -64,6 +70,10 @@ namespace SlotMachine.API.BLs
             // update the balance
             var newBalance = player.Balance - spinData.BetAmount + winBet;
             await _playerRepository.UpdatePlayerBalanceAsync(spinData.PlayerId, newBalance);
+
+            #endregion Critial Section
+
+            await _lockerClient.GetRelease(player.Id);
 
             // return the result
             return new SpinResponse

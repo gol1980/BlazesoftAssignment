@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,40 +8,42 @@ namespace Lock.API.BLs
 {
     public class RequestLocker : IRequestLocker
     {
-        private static readonly object lockObj = new object();
-        private static bool isLock = false;
-        private static EventWaitHandle newRequestAvailable = new AutoResetEvent(false);
+
+        private static readonly object playersLock = new object();
+        HashSet<int> LockedPlayers = new HashSet<int>();
 
         //release
-        public async Task ReleaseRequest()
+        public async Task ReleaseRequestAsync(int playerId)
         {
-            lock (lockObj)
+            lock (playersLock)
             {
-                isLock = false;
+                LockedPlayers.Remove(playerId);
             }
-            newRequestAvailable.Set();
         }
 
         //lock
-        public async Task LockRequest()
+        public async Task LockRequestAsync(int playerId)
         {
-            string id = string.Empty;
-            // if it's locked, wait
+            int id ;
 
-            if (isLock)
+            while (true)
             {
-                newRequestAvailable.WaitOne(); // => wait for release
-                lock (lockObj)
+                lock (playersLock)
                 {
-                    isLock = true;
+                    id = LockedPlayers.FirstOrDefault(pid => pid == playerId);
                 }
+
+                //if player is not locked => out
+                if (id == 0)
+                    break;
+
+                await Task.Delay(500);
             }
-            else
+
+            //lock player
+            lock (playersLock)
             {
-                lock (lockObj)
-                {
-                    isLock = true;
-                }
+                LockedPlayers.Add(playerId);
             }
         }
     }

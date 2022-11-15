@@ -4,7 +4,7 @@ namespace Lock.API.BLs
 {
     public interface IRequestLocker
     {
-        Task LockRequest();
-        Task ReleaseRequest();
+        Task LockRequestAsync(int playerId);
+        Task ReleaseRequestAsync(int playerId);
     }
 }
