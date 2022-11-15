@@ -40,9 +40,15 @@ namespace SlotMachine.API.BLs
             if (spinData.BetAmount > player.Balance)
                 throw new AppException("The amount exceeds the balance", HttpStatusCode.BadRequest);
 
-            await _lockerClient.GetLock(player.Id);
 
+            await _lockerClient.GetLock(spinData.PlayerId);
             #region Critial Section
+
+            //retrive the data again
+            //if there is more than 1 request at the same time,
+            //we need to wait for previous request to complete and finish modifying the balance,
+            //then, we need to retrive the new balance
+            player = await _playerRepository.GetPlayerAsync(spinData.PlayerId);
 
             // get the num of reels from game configuration
             var con = await _gameConfiguration.GetConfigurationAsync();
@@ -71,17 +77,20 @@ namespace SlotMachine.API.BLs
             var newBalance = player.Balance - spinData.BetAmount + winBet;
             await _playerRepository.UpdatePlayerBalanceAsync(spinData.PlayerId, newBalance);
 
-            #endregion Critial Section
-
-            await _lockerClient.GetRelease(player.Id);
-
-            // return the result
-            return new SpinResponse
+            SpinResponse sr = new SpinResponse
             {
                 Balance = newBalance,
                 SpinResult = spinResult,
                 WinAmount = winBet
             };
+
+            #endregion Critial Section
+            await _lockerClient.GetRelease(player.Id);
+
+            // return the result
+            return sr;
+
+
         }
 
         public async Task<int[]> SpinReelsAsync(int numOfReels)
